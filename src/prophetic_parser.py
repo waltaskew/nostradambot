@@ -6,7 +6,7 @@ import os
 import re
 
 
-PROPHECY_DIR = 'prophecy_html'
+PROPHECY_DIR = 'src/prophecy_html'
 PROPHECY_SPLIT_RE = re.compile('[\n]*^[\d]+\n', flags=re.MULTILINE)
 
 def iter_prophecy_files(prophecy_dir):
@@ -14,7 +14,10 @@ def iter_prophecy_files(prophecy_dir):
     in @prophecy_dir.
     """
     for file_name in os.listdir(prophecy_dir):
-        yield os.path.join(prophecy_dir, file_name)
+        path = os.path.join(prophecy_dir, file_name)
+        _, extension = os.path.splitext(path)
+        if extension == '.html':
+            yield path
 
 def get_text(file_name):
     """Seperate the prophecy text from html noise and return the text."""
