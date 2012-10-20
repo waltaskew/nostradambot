@@ -32,7 +32,7 @@ def parse_prophecies(text):
     prophecies = [prophecy.strip() for prophecy in prophecies]
     return [prophecy for prophecy in prophecies if prophecy]
 
-def get_prophecies(prophecy_dir):
+def get_prophecies(prophecy_dir=PROPHECY_DIR):
     """Get a list of prophecies from the html in @prophecy_dir."""
     all_prophecies = []
     for prophecy_file in iter_prophecy_files(prophecy_dir):
