@@ -1,0 +1,7 @@
+jabberbot >= 0.15
+xmpppy
+lazy-reload
+requests
+simplejson
+hippybot
+lxml
