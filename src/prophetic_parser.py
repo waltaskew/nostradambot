@@ -22,7 +22,7 @@ def get_text(file_name):
         tree = lxml.html.parse(prophetic_html)
         root = tree.getroot()
         text = root.xpath('body/pre')[0].text_content()
-        return text.encode('ascii', 'ignore')
+        return text
 
 def parse_prophecies(text):
     """Return a list of prophecies from a big text blob containing
