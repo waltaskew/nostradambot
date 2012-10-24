@@ -12,7 +12,7 @@ PROPHECIES_LENGTH = len(PROPHECIES)
 class Plugin(object):
     """Reveal Nostradamus' prophecies"""
     global_commands = ['prophecy']
-    command_aliases = {'prophecize': 'prophecy'}
+    command_aliases = {'prophesize': 'prophecy'}
 
     @hippybot.decorators.botcmd
     def prophecy(self, mess, args):
