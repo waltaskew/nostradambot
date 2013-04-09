@@ -19,9 +19,3 @@ class Plugin(object):
         """Reveal Nostradamus' prophecies"""
         index = random.randrange(0, PROPHECIES_LENGTH)
         return PROPHECIES[index]
-
-    @hippybot.decorators.directcmd
-    def hello(self, mess, args):
-        """Reveal Nostradamus' prophecies"""
-        index = random.randrange(0, PROPHECIES_LENGTH)
-        return PROPHECIES[index]
