@@ -12,16 +12,10 @@ PROPHECIES_LENGTH = len(PROPHECIES)
 class Plugin(object):
     """Reveal Nostradamus' prophecies"""
     global_commands = ['prophecy']
-    command_aliases = {'prophecize': 'prophecy'}
+    command_aliases = {'prophesize': 'prophecy'}
 
     @hippybot.decorators.botcmd
     def prophecy(self, mess, args):
-        """Reveal Nostradamus' prophecies"""
-        index = random.randrange(0, PROPHECIES_LENGTH)
-        return PROPHECIES[index]
-
-    @hippybot.decorators.directcmd
-    def hello(self, mess, args):
         """Reveal Nostradamus' prophecies"""
         index = random.randrange(0, PROPHECIES_LENGTH)
         return PROPHECIES[index]
