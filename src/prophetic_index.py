@@ -56,44 +56,37 @@ class InvertedIndex(object):
 
     def best_prophecy_for(self, text):
         """Find the prophecy with words most similiar to the given text."""
-        tokens = nltk.word_tokenize(text)
-        search_words = [self.stem(word.lower()) for word in tokens]
-        prophecy_id = self.prophecy_with_most_matches_for(search_words)
-        if prophecy_id is not None:
-            return prophecy_id
-        else:
-            # We expand our search into related words using wordnet
-            pos_tags = nltk.tag.pos_tag(search_words)
-            wordnet_pos = ((word, get_wordnet_pos(pos)) for
-                           word, pos in pos_tags)
-            synsets = set(itertools.chain.from_iterable(
-                nltk.corpus.wordnet.synsets(word, pos=pos) for
-                word, pos in wordnet_pos if pos))
+        pos_tags = nltk.tag.pos_tag(nltk.word_tokenize(text))
+        wordnet_pos = ((word, get_wordnet_pos(pos)) for
+                       word, pos in pos_tags)
+        synsets = set(itertools.chain.from_iterable(
+            nltk.corpus.wordnet.synsets(word, pos=pos) for
+            word, pos in wordnet_pos if pos))
 
-            attempted_words = set(search_words)
-            attempted_synsets = set()
+        attempted_words = set()
+        attempted_synsets = set()
 
-            i = 0
-            while synsets and i < self.max_wordnet_recursions:
-                i = i + 1
+        i = 0
+        while synsets and i < self.max_wordnet_recursions:
+            i = i + 1
 
-                words_to_attempt = set(itertools.chain.from_iterable(
-                    synset.lemma_names() for synset in synsets))
-                words_to_attempt = words_to_attempt.difference(attempted_words)
+            words_to_attempt = set(itertools.chain.from_iterable(
+                synset.lemma_names() for synset in synsets))
+            words_to_attempt = words_to_attempt.difference(attempted_words)
 
-                prophecy_id = self.prophecy_with_most_matches_for(
-                    words_to_attempt)
-                if prophecy_id is not None:
-                    return prophecy_id
-                else:
-                    attempted_words.update(words_to_attempt)
-                    attempted_synsets.update(synsets)
-                    synsets = set(itertools.chain.from_iterable(
-                        synset.hypernyms() + synset.hyponyms() for
-                        synset in synsets))
-                    synsets = synsets.difference(attempted_synsets)
-            # We give up and return a random id :(
-            return random.choice(self.prophecy_ids)
+            prophecy_id = self.prophecy_with_most_matches_for(
+                words_to_attempt)
+            if prophecy_id is not None:
+                return prophecy_id
+            else:
+                attempted_words.update(words_to_attempt)
+                attempted_synsets.update(synsets)
+                synsets = set(itertools.chain.from_iterable(
+                    synset.hypernyms() + synset.hyponyms() for
+                    synset in synsets))
+                synsets = synsets.difference(attempted_synsets)
+        # We give up and return a random id :(
+        return random.choice(list(self.prophecy_ids))
 
     def tokenize(self, text):
         """Return a generator yielding words appearing in the given text."""
