@@ -9,6 +9,7 @@ import re
 PROPHECY_DIR = 'src/prophecy_html'
 PROPHECY_SPLIT_RE = re.compile('[\n]*^[\d]+\n', flags=re.MULTILINE)
 
+
 def iter_prophecy_files(prophecy_dir):
     """Return a generator yielding the text of all the files
     in @prophecy_dir.
@@ -19,6 +20,7 @@ def iter_prophecy_files(prophecy_dir):
         if extension == '.html':
             yield path
 
+
 def get_text(file_name):
     """Seperate the prophecy text from html noise and return the text."""
     with open(file_name, 'r') as prophetic_html:
@@ -27,6 +29,7 @@ def get_text(file_name):
         text = root.xpath('body/pre')[0].text_content()
         return text
 
+
 def parse_prophecies(text):
     """Return a list of prophecies from a big text blob containing
     a series of them.
@@ -34,6 +37,7 @@ def parse_prophecies(text):
     prophecies = PROPHECY_SPLIT_RE.split(text)
     prophecies = [prophecy.strip() for prophecy in prophecies]
     return [prophecy for prophecy in prophecies if prophecy]
+
 
 def get_prophecies(prophecy_dir=PROPHECY_DIR):
     """Get a list of prophecies from the html in @prophecy_dir."""
