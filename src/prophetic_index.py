@@ -9,11 +9,13 @@ class InvertedIndex(object):
 
     def __init__(self):
         self.index = collections.defaultdict(list)
-        self.lemmatizer = nltk.stem.WordNetLemmatizer().lemmatize
+
         self.stop_words = set(nltk.corpus.stopwords.words('english'))
+        self.stem = nltk.stem.porter.PorterStemmer().stem
 
     def add(self, text, prophecy_id):
         """Add the given text to our inverted index."""
+        self.prophecy_ids.add(prophecy_id)
         words = self.tokenize(text)
         words = set(words)
         for word in words:
@@ -21,7 +23,7 @@ class InvertedIndex(object):
 
     def lookup(self, word):
         """Retrieve prophecy ids containing the given word."""
-        word = self.lemmatizer(word).lower()
+        word = self.stem(word).lower()
         return self.index[word]
 
     def best_prophecy_for(self, words):
@@ -53,6 +55,6 @@ class InvertedIndex(object):
         """Return a generator yielding words appearing in the given text."""
         words = nltk.word_tokenize(text)
         words = (word.lower() for word in words)
-        words = (self.lemmatizer(word) for word in words)
+        words = (self.stem(word) for word in words)
         words = (word for word in words if word not in self.stop_words)
         return words
