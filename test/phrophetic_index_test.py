@@ -23,11 +23,20 @@ class InvertedIndexTest(unittest.TestCase):
         index.add('snakes in my bonnet', 1)
         index.add('bees in my dresser', 2)
 
-        self.assertEqual(index.best_prophecy_for(['snake', 'plane']), 0)
-        self.assertEqual(index.best_prophecy_for(['snake', 'bonnet']), 1)
-        for _ in range(5):
-            self.assertIn(index.best_prophecy_for(['snake']), (0, 1))
-        self.assertIsNone(index.best_prophecy_for(['fire']))
+        self.assertEqual(
+            index.prophecy_with_most_matches_for(['snake', 'plane']), 0)
+        self.assertEqual(
+            index.prophecy_with_most_matches_for(['snake', 'bonnet']), 1)
+        self.assertIn(
+            index.prophecy_with_most_matches_for(['snake']), (0, 1))
+        self.assertIsNone(index.prophecy_with_most_matches_for(['fire']))
+
+    def test_smart_scoring(self):
+        """Test finding fuzzy matches in the index."""
+        index = prophetic_index.InvertedIndex()
+        index.add('snakes, planes and automobiles', 0)
+        index.add('bees in my dresser', 1)
+        self.assertEqual(index.best_prophecy_for('serpent'), 0)
 
 
 if __name__ == '__main__':
