@@ -1,5 +1,6 @@
 import itertools
 import random
+import string
 
 import nltk
 import collections
@@ -13,6 +14,7 @@ class InvertedIndex(object):
         self.max_wordnet_recursions = max_wordnet_recursions
 
         self.stop_words = set(nltk.corpus.stopwords.words('english'))
+        self.punctuation = set(string.punctuation)
         self.stem = nltk.stem.porter.PorterStemmer().stem
 
         self.prophecies = prophecies
@@ -24,7 +26,8 @@ class InvertedIndex(object):
         words = self.tokenize(text)
         words = set(words)
         for word in words:
-            self.index[word].append(prophecy_id)
+            if word not in self.punctuation:
+                self.index[word].append(prophecy_id)
 
     def lookup(self, word):
         """Retrieve prophecy ids containing the given word."""
