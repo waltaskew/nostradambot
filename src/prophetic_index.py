@@ -58,7 +58,8 @@ class InvertedIndex(object):
 
     def best_prophecy_for(self, text):
         """Find the prophecy with words most similiar to the given text."""
-        pos_tags = nltk.tag.pos_tag(nltk.word_tokenize(text))
+        tokens = nltk.word_tokenize(text)
+        pos_tags = nltk.tag.pos_tag(tokens)
         wordnet_pos = ((word, get_wordnet_pos(pos)) for
                        word, pos in pos_tags)
         synsets = set(itertools.chain.from_iterable(
@@ -69,11 +70,12 @@ class InvertedIndex(object):
         attempted_synsets = set()
 
         i = 0
-        while synsets and i < self.max_wordnet_recursions:
-            i = i + 1
-
+        while True:
             words_to_attempt = set(itertools.chain.from_iterable(
                 synset.lemma_names() for synset in synsets))
+            if i == 0:
+                # include the raw words on the first pass
+                words_to_attempt.update(tokens)
             words_to_attempt = words_to_attempt.difference(attempted_words)
 
             prophecy = self.prophecy_with_most_matches_for(
@@ -81,14 +83,16 @@ class InvertedIndex(object):
             if prophecy is not None:
                 return prophecy
             else:
+                i += 1
                 attempted_words.update(words_to_attempt)
                 attempted_synsets.update(synsets)
                 synsets = set(itertools.chain.from_iterable(
                     synset.hypernyms() + synset.hyponyms() for
                     synset in synsets))
                 synsets = synsets.difference(attempted_synsets)
-        # We give up and return a random id :(
-        return random.choice(self.prophecies)
+                if not synsets or i >= self.max_wordnet_recursions:
+                    # We give up and return a random id :(
+                    return random.choice(self.prophecies)
 
     def tokenize(self, text):
         """Return a generator yielding words appearing in the given text."""
