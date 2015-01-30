@@ -8,17 +8,19 @@ import collections
 class InvertedIndex(object):
     """An inverted index mapping word appearances to their prophecy id."""
 
-    def __init__(self, max_wordnet_recursions=10):
+    def __init__(self, prophecies, max_wordnet_recursions=10):
         self.index = collections.defaultdict(list)
         self.max_wordnet_recursions = max_wordnet_recursions
-        self.prophecy_ids = set()
 
         self.stop_words = set(nltk.corpus.stopwords.words('english'))
         self.stem = nltk.stem.porter.PorterStemmer().stem
 
+        self.prophecies = prophecies
+        for idx, prophecy in enumerate(prophecies):
+            self.add(prophecy, idx)
+
     def add(self, text, prophecy_id):
         """Add the given text to our inverted index."""
-        self.prophecy_ids.add(prophecy_id)
         words = self.tokenize(text)
         words = set(words)
         for word in words:
@@ -32,7 +34,7 @@ class InvertedIndex(object):
     def prophecy_with_most_matches_for(self, words):
         """Find the prophecy with the most matches for the given words.
 
-        Return the prophecy id with the most matches for the list of words,
+        Return the prophecy with the most matches for the list of words,
         breaking ties randomly.
         """
         prophecy_matches = collections.defaultdict(int)
@@ -50,7 +52,7 @@ class InvertedIndex(object):
                 elif matches > most_matches:
                     most_matches = matches
                     best_prophecies = [prophecy_id]
-            return random.choice(best_prophecies)
+            return self.prophecies[random.choice(best_prophecies)]
         else:
             return None
 
@@ -74,10 +76,10 @@ class InvertedIndex(object):
                 synset.lemma_names() for synset in synsets))
             words_to_attempt = words_to_attempt.difference(attempted_words)
 
-            prophecy_id = self.prophecy_with_most_matches_for(
+            prophecy = self.prophecy_with_most_matches_for(
                 words_to_attempt)
-            if prophecy_id is not None:
-                return prophecy_id
+            if prophecy is not None:
+                return prophecy
             else:
                 attempted_words.update(words_to_attempt)
                 attempted_synsets.update(synsets)
@@ -86,7 +88,7 @@ class InvertedIndex(object):
                     synset in synsets))
                 synsets = synsets.difference(attempted_synsets)
         # We give up and return a random id :(
-        return random.choice(list(self.prophecy_ids))
+        return random.choice(self.prophecies)
 
     def tokenize(self, text):
         """Return a generator yielding words appearing in the given text."""
