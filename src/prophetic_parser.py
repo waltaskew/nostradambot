@@ -7,7 +7,7 @@ import re
 
 
 PROPHECY_DIR = 'src/prophecy_html'
-PROPHECY_SPLIT_RE = re.compile('[\n]*^[\d]+\n', flags=re.MULTILINE)
+PROPHECY_SPLIT_RE = re.compile('[\n]*^[\d]+\\.?\n', flags=re.MULTILINE)
 
 
 def iter_prophecy_files(prophecy_dir):
