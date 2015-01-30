@@ -1,3 +1,5 @@
+import random
+
 import nltk
 import collections
 
@@ -21,6 +23,31 @@ class InvertedIndex(object):
         """Retrieve prophecy ids containing the given word."""
         word = self.lemmatizer(word).lower()
         return self.index[word]
+
+    def best_prophecy_for(self, words):
+        """Find the prophecy with the most matches for the given words.
+
+        Return the prophecy id with the most matches for the list of words,
+        breaking ties randomly.
+        """
+        prophecy_matches = collections.defaultdict(int)
+        for word in words:
+            prophecy_ids = self.lookup(word)
+            for prophecy_id in prophecy_ids:
+                prophecy_matches[prophecy_id] += 1
+
+        if prophecy_matches:
+            most_matches = -1
+            best_prophecies = []
+            for prophecy_id, matches in prophecy_matches.iteritems():
+                if matches == most_matches:
+                    best_prophecies.append(prophecy_id)
+                elif matches > most_matches:
+                    most_matches = matches
+                    best_prophecies = [prophecy_id]
+            return random.choice(best_prophecies)
+        else:
+            return None
 
     def tokenize(self, text):
         """Return a generator yielding words appearing in the given text."""
