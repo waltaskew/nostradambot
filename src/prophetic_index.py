@@ -93,8 +93,8 @@ class InvertedIndex(object):
     def tokenize(self, text):
         """Return a generator yielding words appearing in the given text."""
         words = nltk.word_tokenize(text)
-        words = (word.lower() for word in words)
         words = (self.stem(word) for word in words)
+        words = (word.lower() for word in words)
         words = (word for word in words if word not in self.stop_words)
         return words
 
